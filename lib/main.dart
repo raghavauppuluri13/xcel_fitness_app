@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:xcel_fitness_app/screens/authentication/authentication_screen.dart';
-import 'package:xcel_fitness_app/screens/authentication/login_screen.dart';
 
 void main() => runApp(MyApp());
 
