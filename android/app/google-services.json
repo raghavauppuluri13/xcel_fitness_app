@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "261733575663",
+    "firebase_url": "https://xcel-fitness-app.firebaseio.com",
+    "project_id": "xcel-fitness-app",
+    "storage_bucket": "xcel-fitness-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261733575663:android:72924b00ac503652eea41a",
+        "android_client_info": {
+          "package_name": "com.example.xcel_fitness_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "261733575663-osncg8j3op5536j2a9m58glhe4elo177.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJw13qvuxITY61KIyB3LijRcRPzDgJeQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "261733575663-osncg8j3op5536j2a9m58glhe4elo177.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "261733575663-shq9nknlqqjpf8ru3aoq0tp9m11egpnk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.xcelFitnessApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
