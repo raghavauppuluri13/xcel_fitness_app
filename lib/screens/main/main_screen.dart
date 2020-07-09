@@ -12,10 +12,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _isSettingsButtonClicked = false;
+  bool _isNotificationButtonClicked = false;
 
   void openSettingsTemplate() {
     setState(() {
       _isSettingsButtonClicked = true;
+      _isNotificationButtonClicked = false;
+    });
+  }
+
+  void openNotificationTemplate() {
+    setState(() {
+      _isNotificationButtonClicked = true;
+      _isSettingsButtonClicked = false;
     });
   }
 
@@ -49,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.notifications),
-            onPressed: () => {},
+            onPressed: openNotificationTemplate,
           )
         ],
       ),
@@ -78,6 +87,40 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: GestureDetector(
                       child: Container(
                         child: new SettingsTemplate(),
+                        decoration: new BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.white),
+                      ),
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ]),
+          if (_isNotificationButtonClicked)
+            Stack(children: [
+              GestureDetector(
+                child: Container(
+                  color: Colors.black45,
+                  width: screenWidth,
+                  height: screenHeight,
+                ),
+                onTap: () {
+                  setState(() {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    _isNotificationButtonClicked = false;
+                  });
+                },
+              ),
+              Container(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: SingleChildScrollView(
+                    child: GestureDetector(
+                      child: Container(
+                        child: new NotificationTemplate(),
                         decoration: new BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
                             color: Colors.white),
