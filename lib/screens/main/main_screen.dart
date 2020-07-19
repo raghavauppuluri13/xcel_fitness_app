@@ -51,15 +51,42 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text((_selectedIndex == 0)
             ? "Home"
             : (_selectedIndex == 1) ? "Workouts" : "History"),
-        leading: IconButton(
-          icon: Icon(Icons.settings),
-          onPressed: openSettingsTemplate,
-        ),
+        leading: (_selectedIndex == 0)
+            ? IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: openSettingsTemplate,
+              )
+            : (_selectedIndex == 1)
+                ? IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  new SearchWorkoutTemplate()));
+                    },
+                  )
+                : IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed:
+                        openSettingsTemplate, //change with history search template
+                  ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: openNotificationTemplate,
-          )
+          (_selectedIndex == 0)
+              ? IconButton(
+                  icon: Icon(Icons.notifications),
+                  onPressed: openNotificationTemplate,
+                )
+              : (_selectedIndex == 1)
+                  ? IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: openNotificationTemplate,
+                    )
+                  : IconButton(
+                      icon: Icon(Icons.crop_din), //empty icon
+                      onPressed: () {},
+                    )
         ],
       ),
       body: Stack(

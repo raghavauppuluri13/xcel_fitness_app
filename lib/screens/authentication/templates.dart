@@ -587,3 +587,69 @@ class _NotificationTemplateState extends State<NotificationTemplate> {
     ]);
   }
 }
+//search workout template
+class SearchWorkoutTemplate extends StatefulWidget {
+  SearchWorkoutTemplate();
+
+  @override
+  State<SearchWorkoutTemplate> createState() {
+    return _SearchWorkoutTemplateState();
+  }
+}
+
+class _SearchWorkoutTemplateState extends State<SearchWorkoutTemplate> {
+    Icon _searchIcon = new Icon(Icons.search);
+    Icon _backIcon = new Icon(Icons.arrow_back);
+    Widget _appBarTitle = new Text( 'Search Workouts' );
+  Widget build(BuildContext context) {
+    //used to set relative sizing based on a pixel 2 phone
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double pixelTwoWidth = 411.42857142857144;
+    double pixelTwoHeight = 683.4285714285714;
+
+
+    return Stack(children: <Widget>[
+      SizedBox(
+        width: screenWidth,
+        height: screenHeight,
+        child: Scaffold(
+          appBar: new AppBar(
+             leading: new IconButton(
+            icon: _backIcon,
+            onPressed: (){
+              Navigator.pop(context);
+            }, 
+      ),
+            title: _appBarTitle,
+            actions: <Widget>[
+            IconButton(
+                  icon: _searchIcon,
+                  onPressed: _searchPressed,
+                )
+        ],
+          ) ,
+        ),
+      ),
+    ]);
+  }
+
+void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          decoration: new InputDecoration(
+            prefixIcon: new Icon(Icons.search),
+            hintText: 'Search...'
+          ),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text( 'Search Workouts' );
+
+      }
+    });
+  }
+
+}
