@@ -507,6 +507,7 @@ class _SettingsTemplateState extends State<SettingsTemplate> {
     ]);
   }
 }
+
 //notification template
 class NotificationTemplate extends StatefulWidget {
   NotificationTemplate();
@@ -528,7 +529,7 @@ class _NotificationTemplateState extends State<NotificationTemplate> {
     return Stack(children: <Widget>[
       SizedBox(
         width: screenWidth * 0.8,
-        height: screenHeight*0.5,
+        height: screenHeight * 0.5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -587,6 +588,7 @@ class _NotificationTemplateState extends State<NotificationTemplate> {
     ]);
   }
 }
+
 //search workout template
 class SearchWorkoutTemplate extends StatefulWidget {
   SearchWorkoutTemplate();
@@ -598,9 +600,9 @@ class SearchWorkoutTemplate extends StatefulWidget {
 }
 
 class _SearchWorkoutTemplateState extends State<SearchWorkoutTemplate> {
-    Icon _searchIcon = new Icon(Icons.search);
-    Icon _backIcon = new Icon(Icons.arrow_back);
-    Widget _appBarTitle = new Text( 'Search Workouts' );
+  Icon _searchIcon = new Icon(Icons.search);
+  Icon _backIcon = new Icon(Icons.arrow_back);
+  Widget _appBarTitle = new Text('Search Workouts');
   Widget build(BuildContext context) {
     //used to set relative sizing based on a pixel 2 phone
     double screenWidth = MediaQuery.of(context).size.width;
@@ -608,6 +610,67 @@ class _SearchWorkoutTemplateState extends State<SearchWorkoutTemplate> {
     double pixelTwoWidth = 411.42857142857144;
     double pixelTwoHeight = 683.4285714285714;
 
+    return Stack(children: <Widget>[
+      SizedBox(
+        width: screenWidth,
+        height: screenHeight,
+        child: Scaffold(
+          appBar: new AppBar(
+            leading: new IconButton(
+              icon: _backIcon,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: _appBarTitle,
+            actions: <Widget>[
+              IconButton(
+                icon: _searchIcon,
+                onPressed: _searchPressed,
+              )
+            ],
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          decoration: new InputDecoration(
+              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text('Search Workouts');
+      }
+    });
+  }
+}
+
+//search history template
+class SearchHistoryTemplate extends StatefulWidget {
+  SearchHistoryTemplate();
+
+  @override
+  State<SearchHistoryTemplate> createState() {
+    return _SearchHistoryTemplateState();
+  }
+}
+
+class _SearchHistoryTemplateState extends State<SearchHistoryTemplate> {
+  Icon _searchIcon = new Icon(Icons.search);
+  Icon _backIcon = new Icon(Icons.arrow_back);
+  Widget _appBarTitle = new Text('Search History');
+  Widget build(BuildContext context) {
+    //used to set relative sizing based on a pixel 2 phone
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double pixelTwoWidth = 411.42857142857144;
+    double pixelTwoHeight = 683.4285714285714;
 
     return Stack(children: <Widget>[
       SizedBox(
@@ -615,41 +678,37 @@ class _SearchWorkoutTemplateState extends State<SearchWorkoutTemplate> {
         height: screenHeight,
         child: Scaffold(
           appBar: new AppBar(
-             leading: new IconButton(
-            icon: _backIcon,
-            onPressed: (){
-              Navigator.pop(context);
-            }, 
-      ),
+            leading: new IconButton(
+              icon: _backIcon,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
             title: _appBarTitle,
             actions: <Widget>[
-            IconButton(
-                  icon: _searchIcon,
-                  onPressed: _searchPressed,
-                )
-        ],
-          ) ,
+              IconButton(
+                icon: _searchIcon,
+                onPressed: _searchPressed,
+              )
+            ],
+          ),
         ),
       ),
     ]);
   }
 
-void _searchPressed() {
+  void _searchPressed() {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
         this._searchIcon = new Icon(Icons.close);
         this._appBarTitle = new TextField(
           decoration: new InputDecoration(
-            prefixIcon: new Icon(Icons.search),
-            hintText: 'Search...'
-          ),
+              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
         );
       } else {
         this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text( 'Search Workouts' );
-
+        this._appBarTitle = new Text('Search History');
       }
     });
   }
-
 }

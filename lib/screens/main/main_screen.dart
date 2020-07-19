@@ -69,8 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 : IconButton(
                     icon: Icon(Icons.search),
-                    onPressed:
-                        openSettingsTemplate, //change with history search template
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  new SearchHistoryTemplate()));
+                    },
                   ),
         actions: <Widget>[
           (_selectedIndex == 0)
