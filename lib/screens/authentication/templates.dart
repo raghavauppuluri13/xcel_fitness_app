@@ -380,3 +380,335 @@ class _RegisterTemplateState extends State<RegisterTemplate> {
     );
   }
 }
+
+//settings template
+class SettingsTemplate extends StatefulWidget {
+  SettingsTemplate();
+
+  @override
+  State<SettingsTemplate> createState() {
+    return _SettingsTemplateState();
+  }
+}
+
+BoxDecoration MyBoxDecoration() {
+  return BoxDecoration(
+      border: Border.all(
+        color: Colors.red,
+        width: 3.0,
+      ),
+      borderRadius: BorderRadius.all(Radius.circular(30.0)));
+}
+
+class _SettingsTemplateState extends State<SettingsTemplate> {
+  Widget build(BuildContext context) {
+    //used to set relative sizing based on a pixel 2 phone
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double pixelTwoWidth = 411.42857142857144;
+    double pixelTwoHeight = 683.4285714285714;
+
+    String _firstName = 'Sally';
+    String _lastName = 'Johnson';
+    String _subscription = 'Trainer';
+    String _emailAddress = 'SallyJ@gmail.com';
+
+    return Stack(children: <Widget>[
+      Container(
+        width: screenWidth * 0.8,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 15 * screenHeight / pixelTwoHeight),
+              child: Container(
+                child: Text(
+                  "Settings",
+                  style: new TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 32 * screenWidth / pixelTwoWidth,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 15 * screenHeight / pixelTwoHeight),
+              child: Container(
+                decoration: MyBoxDecoration(),
+                child: Text(
+                  "  Name:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" +
+                      _firstName +
+                      " " +
+                      _lastName +
+                      "  ",
+                  style: new TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 18 * screenWidth / pixelTwoWidth,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 15 * screenHeight / pixelTwoHeight),
+              child: Container(
+                decoration: MyBoxDecoration(),
+                child: Text(
+                  "  Subscription:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" +
+                      _subscription +
+                      "  ",
+                  style: new TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 18 * screenWidth / pixelTwoWidth,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 15 * screenHeight / pixelTwoHeight),
+              child: Container(
+                decoration: MyBoxDecoration(),
+                child: Text(
+                  "  Email:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" +
+                      _emailAddress +
+                      "  ",
+                  style: new TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 18 * screenWidth / pixelTwoWidth,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: new EdgeInsets.all(screenHeight / 45),
+              child: ButtonTheme(
+                  minWidth: 150.0,
+                  height: screenHeight * 0.07,
+                  child: RaisedButton(
+                    textColor: Colors.white,
+                    color: Colors.red[600],
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Container(
+                      child: Text(
+                        "Reset Password",
+                        style: new TextStyle(
+                            fontSize: 20 * screenWidth / pixelTwoWidth,
+                            fontFamily: 'Lato'),
+                      ),
+                    ),
+                    onPressed: () {},
+                  )),
+            )
+          ],
+        ),
+      ),
+    ]);
+  }
+}
+
+//notification template
+class NotificationTemplate extends StatefulWidget {
+  NotificationTemplate();
+
+  @override
+  State<NotificationTemplate> createState() {
+    return _NotificationTemplateState();
+  }
+}
+
+class _NotificationTemplateState extends State<NotificationTemplate> {
+  Widget build(BuildContext context) {
+    //used to set relative sizing based on a pixel 2 phone
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double pixelTwoWidth = 411.42857142857144;
+    double pixelTwoHeight = 683.4285714285714;
+
+    return Stack(children: <Widget>[
+      SizedBox(
+        width: screenWidth * 0.8,
+        height: screenHeight * 0.5,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 15 * screenHeight / pixelTwoHeight),
+              child: Container(
+                child: Text(
+                  "Notifications",
+                  style: new TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 32 * screenWidth / pixelTwoWidth,
+                  ),
+                ),
+              ),
+            ),
+            Spacer(flex: 1),
+            Padding(
+              padding: EdgeInsets.only(top: 15 * screenHeight / pixelTwoHeight),
+              child: Container(
+                child: Text(
+                  "No Notifications",
+                  style: new TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 18 * screenWidth / pixelTwoWidth,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            Spacer(flex: 1),
+            Padding(
+              padding: new EdgeInsets.all(screenHeight / 45),
+              child: ButtonTheme(
+                  minWidth: 150.0,
+                  height: screenHeight * 0.07,
+                  child: RaisedButton(
+                    textColor: Colors.white,
+                    color: Colors.red[600],
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Container(
+                      child: Text(
+                        "Clear All",
+                        style: new TextStyle(
+                            fontSize: 20 * screenWidth / pixelTwoWidth,
+                            fontFamily: 'Lato'),
+                      ),
+                    ),
+                    onPressed: () {},
+                  )),
+            )
+          ],
+        ),
+      ),
+    ]);
+  }
+}
+
+//search workout template
+class SearchWorkoutTemplate extends StatefulWidget {
+  SearchWorkoutTemplate();
+
+  @override
+  State<SearchWorkoutTemplate> createState() {
+    return _SearchWorkoutTemplateState();
+  }
+}
+
+class _SearchWorkoutTemplateState extends State<SearchWorkoutTemplate> {
+  Icon _searchIcon = new Icon(Icons.search);
+  Icon _backIcon = new Icon(Icons.arrow_back);
+  Widget _appBarTitle = new Text('Search Workouts');
+  Widget build(BuildContext context) {
+    //used to set relative sizing based on a pixel 2 phone
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double pixelTwoWidth = 411.42857142857144;
+    double pixelTwoHeight = 683.4285714285714;
+
+    return Stack(children: <Widget>[
+      SizedBox(
+        width: screenWidth,
+        height: screenHeight,
+        child: Scaffold(
+          appBar: new AppBar(
+            leading: new IconButton(
+              icon: _backIcon,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: _appBarTitle,
+            actions: <Widget>[
+              IconButton(
+                icon: _searchIcon,
+                onPressed: _searchPressed,
+              )
+            ],
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          decoration: new InputDecoration(
+              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text('Search Workouts');
+      }
+    });
+  }
+}
+
+//search history template
+class SearchHistoryTemplate extends StatefulWidget {
+  SearchHistoryTemplate();
+
+  @override
+  State<SearchHistoryTemplate> createState() {
+    return _SearchHistoryTemplateState();
+  }
+}
+
+class _SearchHistoryTemplateState extends State<SearchHistoryTemplate> {
+  Icon _searchIcon = new Icon(Icons.search);
+  Icon _backIcon = new Icon(Icons.arrow_back);
+  Widget _appBarTitle = new Text('Search History');
+  Widget build(BuildContext context) {
+    //used to set relative sizing based on a pixel 2 phone
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double pixelTwoWidth = 411.42857142857144;
+    double pixelTwoHeight = 683.4285714285714;
+
+    return Stack(children: <Widget>[
+      SizedBox(
+        width: screenWidth,
+        height: screenHeight,
+        child: Scaffold(
+          appBar: new AppBar(
+            leading: new IconButton(
+              icon: _backIcon,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: _appBarTitle,
+            actions: <Widget>[
+              IconButton(
+                icon: _searchIcon,
+                onPressed: _searchPressed,
+              )
+            ],
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          decoration: new InputDecoration(
+              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text('Search History');
+      }
+    });
+  }
+}
