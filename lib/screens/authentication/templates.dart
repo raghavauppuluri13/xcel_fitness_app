@@ -602,7 +602,7 @@ class SearchWorkoutTemplate extends StatefulWidget {
 class _SearchWorkoutTemplateState extends State<SearchWorkoutTemplate> {
   Icon _searchIcon = new Icon(Icons.search);
   Icon _backIcon = new Icon(Icons.arrow_back);
-  Widget _appBarTitle = new Text('Search Workouts');
+  Widget _appBarTitle = new Center(child: new Text('Search Workouts', textAlign: TextAlign.center));
   Widget build(BuildContext context) {
     //used to set relative sizing based on a pixel 2 phone
     double screenWidth = MediaQuery.of(context).size.width;
@@ -610,11 +610,7 @@ class _SearchWorkoutTemplateState extends State<SearchWorkoutTemplate> {
     double pixelTwoWidth = 411.42857142857144;
     double pixelTwoHeight = 683.4285714285714;
 
-    return Stack(children: <Widget>[
-      SizedBox(
-        width: screenWidth,
-        height: screenHeight,
-        child: Scaffold(
+    return Scaffold(
           appBar: new AppBar(
             leading: new IconButton(
               icon: _backIcon,
@@ -630,9 +626,7 @@ class _SearchWorkoutTemplateState extends State<SearchWorkoutTemplate> {
               )
             ],
           ),
-        ),
-      ),
-    ]);
+        );
   }
 
   void _searchPressed() {
@@ -641,11 +635,14 @@ class _SearchWorkoutTemplateState extends State<SearchWorkoutTemplate> {
         this._searchIcon = new Icon(Icons.close);
         this._appBarTitle = new TextField(
           decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
+              prefixIcon: new Icon(Icons.search), 
+              hintText: 'Search...',
+              suffixIcon: new Icon(Icons.mic)
+              ),
         );
       } else {
         this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text('Search Workouts');
+        this._appBarTitle = new Center(child: new Text('Search Workouts', textAlign: TextAlign.center));
       }
     });
   }
@@ -664,7 +661,7 @@ class SearchHistoryTemplate extends StatefulWidget {
 class _SearchHistoryTemplateState extends State<SearchHistoryTemplate> {
   Icon _searchIcon = new Icon(Icons.search);
   Icon _backIcon = new Icon(Icons.arrow_back);
-  Widget _appBarTitle = new Text('Search History');
+  Widget _appBarTitle = new Center(child: new Text('Search History', textAlign: TextAlign.center));
   Widget build(BuildContext context) {
     //used to set relative sizing based on a pixel 2 phone
     double screenWidth = MediaQuery.of(context).size.width;
@@ -672,11 +669,7 @@ class _SearchHistoryTemplateState extends State<SearchHistoryTemplate> {
     double pixelTwoWidth = 411.42857142857144;
     double pixelTwoHeight = 683.4285714285714;
 
-    return Stack(children: <Widget>[
-      SizedBox(
-        width: screenWidth,
-        height: screenHeight,
-        child: Scaffold(
+    return Scaffold(
           appBar: new AppBar(
             leading: new IconButton(
               icon: _backIcon,
@@ -692,9 +685,7 @@ class _SearchHistoryTemplateState extends State<SearchHistoryTemplate> {
               )
             ],
           ),
-        ),
-      ),
-    ]);
+        );
   }
 
   void _searchPressed() {
@@ -703,12 +694,112 @@ class _SearchHistoryTemplateState extends State<SearchHistoryTemplate> {
         this._searchIcon = new Icon(Icons.close);
         this._appBarTitle = new TextField(
           decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
+              prefixIcon: new Icon(Icons.search), 
+              hintText: 'Search...',
+              suffixIcon: new Icon(Icons.mic)
+              ),
+              
         );
       } else {
         this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text('Search History');
+        this._appBarTitle = new Center(child: new Text('Search History', textAlign: TextAlign.center));
       }
     });
   }
 }
+
+//create workout template
+class CreateWorkoutTemplate extends StatefulWidget {
+  CreateWorkoutTemplate();
+
+  @override
+  State<CreateWorkoutTemplate> createState() {
+    return _CreateWorkoutTemplateState();
+  }
+}
+
+class _CreateWorkoutTemplateState extends State<CreateWorkoutTemplate> {
+  Icon _addIcon = new Icon(Icons.add);
+  Icon _backIcon = new Icon(Icons.arrow_back);
+  double pixelTwoWidth = 411.42857142857144;
+  Widget _appBarTitle = new Center(child: new Text('Workout 1', textAlign: TextAlign.center));
+    TextStyle style =
+      TextStyle(fontFamily: 'Lato', fontSize: 20, color: Colors.white);
+
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    final loginButton = Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(30.0),
+      color: Colors.red[600],
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
+        onPressed: () {},
+        child: Text("Save and Create Workout",
+            textAlign: TextAlign.center,
+            style: style,
+      ),
+    ));
+
+    return Scaffold(
+          appBar: new AppBar(
+            leading: new IconButton(
+              icon: _backIcon,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: _appBarTitle,
+            actions: <Widget>[
+              IconButton(
+                icon: _addIcon,
+                onPressed: () {},
+              )
+            ],
+          ),
+               body: Stack(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            child: Center(
+              child: Container(
+                  child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Spacer(flex: 1),
+                      Spacer(flex: 1),
+                      Spacer(flex: 1),
+                      Flexible(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: 15.0, right: 30.0, left: 30.0),
+                              child: SizedBox(
+                                child: loginButton,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ]),
+              )),
+            ),
+          ),
+        ]
+        )
+        );
+  }
+}
+
