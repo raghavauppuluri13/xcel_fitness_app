@@ -722,7 +722,11 @@ class _CreateWorkoutTemplateState extends State<CreateWorkoutTemplate> {
   Icon _addIcon = new Icon(Icons.add);
   Icon _backIcon = new Icon(Icons.arrow_back);
   double pixelTwoWidth = 411.42857142857144;
-  Widget _appBarTitle = new Center(child: new Text('Workout 1', textAlign: TextAlign.center));
+
+bool onClickedTitle = false; //   new
+String _workoutName = "Workout 1"; //   8/3/20
+
+  Widget _appBarTitle = new Text('Workout 1', textAlign: TextAlign.center);
     TextStyle style =
       TextStyle(fontFamily: 'Lato', fontSize: 20, color: Colors.white);
 
@@ -752,7 +756,23 @@ class _CreateWorkoutTemplateState extends State<CreateWorkoutTemplate> {
                 Navigator.pop(context);
               },
             ),
-            title: _appBarTitle,
+            title: (onClickedTitle)
+            ? TextField(
+              style: style,
+              onChanged: (newVal) => {
+                setState(() {
+                  _workoutName = newVal;
+                })
+              },
+            )
+            : FlatButton( //instead of textbutton because that doesn't exist for some reason
+              child: new Center(child: Text(_workoutName, textAlign: TextAlign.center, style: style,),),
+              onPressed: () => {
+                setState(() {
+                  onClickedTitle = true;
+                })
+              },
+            ),
             actions: <Widget>[
               IconButton(
                 icon: _addIcon,
@@ -760,7 +780,17 @@ class _CreateWorkoutTemplateState extends State<CreateWorkoutTemplate> {
               )
             ],
           ),
-               body: Stack(
+               body: GestureDetector(
+                 onTap: () => {
+                   if (onClickedTitle)
+                    {
+                      setState(() {
+                        onClickedTitle=false;
+                      })
+                    }
+                 },
+               
+               child: Stack(
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
@@ -799,7 +829,7 @@ class _CreateWorkoutTemplateState extends State<CreateWorkoutTemplate> {
           ),
         ]
         )
+        )
         );
   }
 }
-
