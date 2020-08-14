@@ -87,12 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                   CreateWorkoutTemplate()));
-                    },
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateWorkoutTemplate()));
+                      },
                     )
                   : IconButton(
                       icon: Icon(Icons.crop_din), //empty icon
