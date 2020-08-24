@@ -25,6 +25,8 @@ dependencies:
   curved_navigation_bar:
   firebase_messaging:
   cupertino_icons:
+  flutter_slidable:
+  alphabet_list_scroll_view:
 
 dev_dependencies:
   flutter_test:

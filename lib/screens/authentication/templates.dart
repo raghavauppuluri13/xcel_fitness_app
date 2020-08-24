@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:xcel_fitness_app/screens/main/main_screen.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 //login template
 class LoginTemplate extends StatefulWidget {
@@ -893,12 +895,13 @@ class addWorkoutsTemplate extends StatefulWidget {
 }
 
 class _addWorkoutsTemplateState extends State<addWorkoutsTemplate> {
+
+Map exercises = {"Push-Up": {"category": "Chest"}, "Bench-Press": {"category": "Chest"}, "Squat": {"category": "Legs"}, "Lunge": {"category": "Legs"}, "Plank": {"category": "Core"}, "Burpee": {"category": "Full Body"}, "Sit-Up": {"category": "Core"}, "Calf-Raise": {"category": "Legs"}, "Lateral-Raise": {"category": "Arms"}, "Bicep-Curl": {"category": "Arms"}};
+List<String> exercisenames = ['Push-Up', 'Bench-Press', 'Squat', 'Lunge', 'Plank', 'Burpee', 'Sit-Up', 'Calf-Raise', 'Lateral-Raise', 'Bicep-Curl'];
+
   Widget build(BuildContext context) {
-    //used to set relative sizing based on a pixel 2 phone
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double pixelTwoWidth = 411.42857142857144;
-    double pixelTwoHeight = 683.4285714285714;
 
     return SizedBox(
       width: screenWidth * 0.8,
@@ -909,34 +912,63 @@ class _addWorkoutsTemplateState extends State<addWorkoutsTemplate> {
             automaticallyImplyLeading: false,
             title: TextField(
               cursorColor: Colors.red,
-          decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.search, color: Colors.red),
-              hintText: 'Search...',
-              suffixIcon: new Icon(Icons.mic, color: Colors.red)),
-        ),
+              decoration: new InputDecoration(
+                  prefixIcon: new Icon(Icons.search, color: Colors.red),
+                  hintText: 'Search...',
+                  suffixIcon: new Icon(Icons.mic, color: Colors.red)),
+            ),
           ),
-          body: ListView(
-            children: <Widget>[
-              Card(
-                child: ListTile(
-                  leading: Icon(FlutterIcons.dumbbell_faw5s, color: Colors.red),
-                  title: Text('Push-Up'),
-                  subtitle: Text('Chest'),
-                  trailing: Icon(Icons.help_outline),
-                  onTap: () => {},
-                ),
+          body: Stack(children: <Widget>[
+            AlphabetListScrollView(
+              strList: exercisenames,
+              highlightTextStyle: TextStyle(
+                color: Colors.red,
               ),
-              Card(
-                child: ListTile(
-                  leading: Icon(FlutterIcons.dumbbell_faw5s, color: Colors.red),
-                  title: Text('Sit-Up'),
-                  subtitle: Text('Core'),
-                  trailing: Icon(Icons.help_outline),
-                  onTap: () => {},
-                ),
-              ),
-            ],
-          )),
+              showPreview: true,
+              
+              itemBuilder: (context, index) {
+              return Card(
+                  //margin: EdgeInsets.fromLTRB(4.0, 2.0, 40.0, 2.0),
+                  child: ListTile(
+                    leading:
+                        Icon(FlutterIcons.dumbbell_faw5s, color: Colors.red),
+                    title: Text(exercisenames[index]),
+                    subtitle: Text(exercises[exercisenames[index]]['category']),
+                    trailing: Icon(Icons.help_outline),
+                    onTap: () => {},
+                  ),
+                );
+            },
+              indexedHeight: (i) {
+              return 80;
+            },
+            keyboardUsage: true,
+            ),
+            // ListView(
+            //   children: <Widget>[
+            //     Card(
+            //       child: ListTile(
+            //         leading:
+            //             Icon(FlutterIcons.dumbbell_faw5s, color: Colors.red),
+            //         title: Text('Push-Up'),
+            //         subtitle: Text('Chest'),
+            //         trailing: Icon(Icons.help_outline),
+            //         onTap: () => {},
+            //       ),
+            //     ),
+            //     Card(
+            //       child: ListTile(
+            //         leading:
+            //             Icon(FlutterIcons.dumbbell_faw5s, color: Colors.red),
+            //         title: Text('Sit-Up'),
+            //         subtitle: Text('Core'),
+            //         trailing: Icon(Icons.help_outline),
+            //         onTap: () => {},
+            //       ),
+            //     ),
+            //   ],
+            // ),
+          ])),
     );
   }
 }
