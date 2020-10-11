@@ -20,10 +20,11 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_auth: 
+  path_provider:
   cloud_firestore:
+  gsheets:
   flutter_icons:
   curved_navigation_bar:
-  firebase_messaging:
   cupertino_icons:
 
 dev_dependencies:

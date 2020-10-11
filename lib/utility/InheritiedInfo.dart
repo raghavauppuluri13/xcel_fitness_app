@@ -1,18 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class StateContainerState extends State<StateContainer> {
-  /* Properties that will be persisted on the side of the Admin */
-  String uid;
-  Map eventMetadata;
-  Map userData; //this is not the app user's UID, but the data of the person who is getting changed
-  bool isCardTapped = false;
-  String filterType;
-  bool isManualEnter = false;
-  String group; //this is the group that might be created or edited
-  int counter = 0;
-  bool isAdmin = false;
-
   /*Properties that will be persisted on the side of the user */
   List notifications = [];
   int notificationCounter =
@@ -34,42 +22,6 @@ class StateContainerState extends State<StateContainer> {
     });
   }
 
-  void setEventMetadata(Map newMetadata) {
-    setState(() {
-      eventMetadata = newMetadata;
-    });
-  }
-
-  void setIsAdmin(bool newVal) {
-    setState(() {
-      isAdmin = newVal;
-    });
-  }
-
-  void setIsManualEnter(bool value) {
-    setState(() {
-      isManualEnter = value;
-    });
-  }
-
-  void setUserData(Map newUserData) {
-    setState(() {
-      userData = newUserData;
-    });
-  }
-
-  void setUID(String _uid) {
-    setState(() {
-      uid = _uid;
-    });
-  }
-
-  void setGroup(String g) {
-    setState(() {
-      group = g;
-    });
-  }
-
   //used to add to the notifications of the user
   void addToNotifications(Map notification) {
     setState(() {
@@ -88,113 +40,6 @@ class StateContainerState extends State<StateContainer> {
     setState(() {
       this.notifications = notifications;
     });
-  }
-
-  void setFilterType(String newFilterType) {
-    setState(() {
-      filterType = newFilterType;
-    });
-  }
-
-  void updateGP(String userUniqueId, [int manualGP]) {
-    incrementAttendees(userUniqueId).then((_) =>
-        addToEvents(userUniqueId, manualGP)
-            .then((_) => syncGPWithEvents(userUniqueId)));
-    //adds the current event in eventMetadata state to events field for the user that is parameterized
-    //updates gp value to match events field in user
-  }
-
-  void syncGPWithEvents(String userUniqueId) {
-    Firestore.instance
-        .collection('Users')
-        .document(userUniqueId)
-        .get()
-        .then((userData) {
-      int totalGP = 0;
-      Map eventsList = userData.data['events'];
-      print(eventsList);
-
-      for (var gp in eventsList.keys) {
-        totalGP += eventsList[gp];
-      }
-
-      Firestore.instance
-          .collection('Users')
-          .document(userUniqueId)
-          .updateData({'gold_points': totalGP});
-    });
-  }
-
-  Future incrementAttendees(String _uid) async {
-    bool hasAttended = false;
-    Map userSnapshot;
-    await Firestore.instance
-        .collection('Users')
-        .document(_uid)
-        .get()
-        .then((data) {
-      userSnapshot = data.data;
-    }).whenComplete(() {
-      for (String eventName in userSnapshot['events'].keys) {
-        if (eventName == eventMetadata['event_name']) {
-          hasAttended = true;
-          break;
-        }
-
-        if (!hasAttended) {
-          int scanCount = eventMetadata['attendee_count'];
-          //update the events
-          Firestore.instance
-              .collection('Events')
-              .document(eventMetadata['event_name'])
-              .updateData({'attendee_count': FieldValue.increment(1)});
-          setState(() {
-            scanCount += 1;
-          });
-        }
-      }
-    });
-  }
-
-  Future decrementAttendees(String eventName) async {
-    //decrement the events
-    Firestore.instance
-        .collection('Events')
-        .document(eventName)
-        .updateData({'attendee_count': FieldValue.increment(-1)});
-  }
-
-  //adds the current event in eventMetadata state to events field for the user that is parameterized
-  Future addToEvents(String userUniqueId, [int manualGP]) async {
-    int pointVal = eventMetadata['gold_points'];
-    DocumentSnapshot userDoc = await Firestore.instance
-        .collection("Users")
-        .document(userUniqueId)
-        .get();
-    Map finalEvents = userDoc.data['events'];
-    print(finalEvents);
-
-    if (finalEvents != null) {
-      if (eventMetadata['enter_type'] == 'QE') {
-        finalEvents[eventMetadata['event_name']] = pointVal;
-      } else if (manualGP != null) {
-        finalEvents[eventMetadata['event_name']] = manualGP;
-      }
-    } else {
-      if (eventMetadata['enter_type'] == 'QE') {
-        finalEvents[eventMetadata['event_name']] = pointVal;
-      } else {
-        finalEvents[eventMetadata['event_name']] = manualGP;
-      }
-    }
-    await Firestore.instance
-        .collection('Users')
-        .document(userUniqueId)
-        .updateData({'events': finalEvents});
-  }
-
-  void setIsCardTapped(bool newVal) {
-    setState(() => isCardTapped = newVal);
   }
 
   // Simple build method that just passes this state through
@@ -229,23 +74,8 @@ class _InheritedStateContainer extends InheritedWidget {
 class StateContainer extends StatefulWidget {
   // You must pass through a child.
   final Widget child;
-  final String uid;
-  final Map eventMetadata;
-  final Map userData;
-  final bool isCardTapped;
-  final bool isAdmin;
-  final String filterType;
-  final bool isManualEnter;
 
-  StateContainer(
-      {@required this.child,
-      this.uid,
-      this.isAdmin,
-      this.eventMetadata,
-      this.userData,
-      this.isCardTapped,
-      this.filterType,
-      this.isManualEnter});
+  StateContainer({@required this.child});
 
   // This is the secret sauce. Write your own 'of' method that will behave
   // Exactly like MediaQuery.of and Theme.of
