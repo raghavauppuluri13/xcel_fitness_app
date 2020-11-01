@@ -23,6 +23,7 @@ dependencies:
   path_provider:
   cloud_firestore:
   gsheets:
+  firebase_core:
   flutter_icons:
   curved_navigation_bar:
   cupertino_icons:

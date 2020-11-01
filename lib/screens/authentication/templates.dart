@@ -397,10 +397,10 @@ class _RegisterTemplateState extends State<RegisterTemplate> {
       "uid": newUid,
     };
 
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection("Users")
-        .document(newUid)
-        .setData(updatedUserData);
+        .doc(newUid)
+        .set(updatedUserData);
     // usersMap[fullName] = newUid;
 
     // await Firestore.instance

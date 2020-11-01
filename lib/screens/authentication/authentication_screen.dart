@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xcel_fitness_app/screens/authentication/templates.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthScreen extends StatefulWidget {
   AuthScreen({Key key}) : super(key: key);
@@ -49,6 +50,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
     final loginButton = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
