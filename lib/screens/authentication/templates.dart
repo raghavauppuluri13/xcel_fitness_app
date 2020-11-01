@@ -1,10 +1,18 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:xcel_fitness_app/screens/main/main_screen.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:gsheets/gsheets.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:xcel_fitness_app/screens/main/main_screen.dart';
+import 'package:xcel_fitness_app/utility/config.dart';
+import 'package:xcel_fitness_app/utility/global.dart';
+import 'package:xcel_fitness_app/utility/notifiers.dart';
 
 //login template
 class LoginTemplate extends StatefulWidget {
@@ -21,12 +29,157 @@ class _LoginTemplateState extends State<LoginTemplate> {
 
   final _loginFormKey = GlobalKey<FormState>();
 
-  TextEditingController _username = new TextEditingController();
+  TextEditingController _email = new TextEditingController();
   TextEditingController _password = new TextEditingController();
+
+  String _tier = "";
 
   bool _desiresAutoLogin = false;
   bool _isLogginIn = false;
-  bool isAdmin = false;
+
+  _LoginTemplateState() {
+    autoLogin();
+  }
+
+  //will auto fill the user's information in the controllers
+  void autoLogin() async {
+    final appDirectory =
+        await getApplicationDocumentsDirectory(); //get app directory
+
+    //check whether the file exists
+    if (File(appDirectory.path + "/user.json").existsSync()) {
+      Map userInfo = json.decode(File(appDirectory.path + "/user.json")
+          .readAsStringSync()); //read data from file
+
+      //alter UI with the autofill information
+      setState(() {
+        _desiresAutoLogin = userInfo['auto'];
+
+        if (_desiresAutoLogin) {
+          _email.text = userInfo['email'];
+          _password.text = userInfo['password'];
+        }
+      });
+    } else {
+      Global.userDataFile = File(appDirectory.path + "/user.json");
+    }
+  }
+
+  //try executing the actual login process
+  void executeLogin() async {
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: _email.text, password: _password.text)
+        .then((authResult) async /*sign in callback */ {
+      String userId =
+          authResult.user.uid; //used to query for the user data in firestore
+
+      Global.uid = userId;
+
+      DocumentSnapshot userDocument = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .get();
+      var userData = userDocument.data();
+
+      // Sets tier
+      _tier = userData["tier"];
+      Global.tier = _tier;
+
+      final appDirectory = await getApplicationDocumentsDirectory();
+
+      //write to json file
+
+      final userStorageFile = File(appDirectory.path + "/user.json");
+
+      //setting the state container file to the userStorageFile
+
+      Global.userDataFile = userStorageFile;
+
+      assert(Global.userDataFile != null);
+
+      Map jsonInformation = {
+        'auto': _desiresAutoLogin,
+        'email': _email.text,
+        'password': _password.text,
+        'tier': _tier
+      };
+
+      await Global.userDataFile.writeAsString(
+          json.encode(jsonInformation)); //update file information
+
+      //changes screen to profile screen
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => new HomeScreen()));
+    }).catchError((error) {
+      print(error);
+
+      setState(() => _isLogginIn = false);
+      //if credentials are invalid then throw the error
+      if (error.toString().contains("INVALID") ||
+          error.toString().contains("WRONG") ||
+          error.toString().contains("NOT_FOUND")) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return SingleActionPopup(
+                  "Invalid Credentials", "Error", Colors.black);
+            });
+      }
+
+      //if network times out, throw error
+      else if (error.toString().contains("NETWORK")) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return ErrorPopup(
+                  "Network timed out, please check your wifi connection", () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _isLogginIn = true;
+                });
+                executeLogin();
+              });
+            });
+      }
+    });
+  }
+
+  //grabs login information from cloud firestore
+  void tryToLogin() async {
+    setState(() {
+      _isLogginIn = true;
+    });
+    executeLogin();
+    // Connectivity()
+    //     .checkConnectivity()
+    //     .then((connectionState) /*check whether phone is connected to wifi */ {
+    //   if (connectionState == ConnectivityResult.none) {
+    //     //connection is not established
+    //     throw Exception("Phone is not connected to wifi");
+    //   } else {
+    //     executeLogin();
+    //   }
+    // }).catchError((error) {
+    //   setState(() => _isLogginIn = false);
+
+    //   //wifi exception
+    //   if (error.toString().contains("Phone")) {
+    //     //show error in UI
+    //     showDialog(
+    //         context: context,
+    //         builder: (context) {
+    //           return ErrorPopup("Phone is not connected to Wifi",
+    //               () /*actions */ {
+    //             Navigator.of(context).pop();
+    //             tryToLogin();
+    //           });
+    //         });
+    //   }
+    // });
+
+    //grabbing the information from firebase auth
+  }
 
   Widget build(BuildContext context) {
     //used to set relative sizing based on a pixel 2 phone
@@ -66,19 +219,19 @@ class _LoginTemplateState extends State<LoginTemplate> {
                         //make this a TextField if using controller
                         child: TextFormField(
                           keyboardType: TextInputType.emailAddress,
-                          controller: _username,
+                          controller: _email,
                           style: TextStyle(
                               fontFamily: 'Lato',
                               fontSize: 18 * screenWidth / pixelTwoWidth),
                           validator: (val) {
                             if (val != "") {
                               setState(() {
-                                _username.text = val;
+                                _email.text = val;
                               });
                             }
 
-                            bool dotIsNotIn = _username.text.indexOf(".") == -1;
-                            bool atIsNotIn = _username.text.indexOf("@") == -1;
+                            bool dotIsNotIn = _email.text.indexOf(".") == -1;
+                            bool atIsNotIn = _email.text.indexOf("@") == -1;
 
                             //validate email locally
 
@@ -165,12 +318,7 @@ class _LoginTemplateState extends State<LoginTemplate> {
                                     fontFamily: 'Lato'),
                               ),
                             ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => new HomeScreen()));
-                            },
+                            onPressed: () => tryToLogin(),
                           )),
                     ),
                   ],
@@ -203,13 +351,190 @@ class RegisterTemplate extends StatefulWidget {
 class _RegisterTemplateState extends State<RegisterTemplate> {
   String _firstName;
   String _lastName;
-  String _username;
+  String _email;
   String _password;
+  String _tier;
   bool _isTryingToRegister = false; //used to give progress bar animation
   bool isNameValid = false;
-  bool isAdmin = false;
+
   final _registrationFormKey = GlobalKey<FormState>();
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  Future<String> authenticateUser() async {
+    String newUid;
+    UserCredential authRes = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: _email.trim(), password: _password.trim());
+    newUid = authRes.user.uid;
+
+    //cache results
+
+    //write to json file
+    final appDirectory = await getApplicationDocumentsDirectory();
+    final userStorageFile = File(appDirectory.path + "/user.json");
+
+    //basic user information
+    Map jsonInformation = {
+      'auto': true,
+      'email': _email,
+      'password': _password,
+      'tier': _tier,
+    } as Map;
+
+    userStorageFile.writeAsStringSync(
+        json.encode(jsonInformation)); //write to fie syncronolys
+
+    //persist useful references like File Pointers
+    Global.userDataFile = userStorageFile;
+    Global.uid = newUid;
+
+    //create new document with data
+
+    Map<String, dynamic> updatedUserData = {
+      "first_name": _firstName.trim(),
+      "email": _email.trim(),
+      "last_name": _lastName.trim(),
+      "tier": _tier.trim(),
+      "uid": newUid,
+    };
+
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(newUid)
+        .set(updatedUserData);
+    // usersMap[fullName] = newUid;
+
+    // await Firestore.instance
+    //     .collection("Aggregators")
+    //     .document("User")
+    //     .updateData({"users": usersMap as Map});
+
+    return "Finished";
+  }
+
+  //executes the actual registration
+  void executeRegistration() async {
+    final gsheets = GSheets(gsheetsConfig);
+    final ss = await gsheets.spreadsheet(sheetId);
+    // get worksheet by its title
+    var sheet = ss.worksheetByTitle('Member Sheet');
+    var firstNames = await sheet.values.column(1);
+    var lastNames = await sheet.values.column(2);
+    var tierValues = await sheet.values.column(3);
+
+    var fIndex = firstNames.indexOf(_firstName.trim());
+    //whether first name exists
+    if (fIndex != -1) {
+      //checks whether last name given matches last name in database
+      if (_lastName.trim() == lastNames.elementAt(fIndex)) {
+        isNameValid = true;
+        //check whether user may be an admin tier
+        if (tierValues.elementAt(fIndex).contains("Admin")) {
+          _tier = tierValues.elementAt(fIndex);
+          Global.tier = _tier;
+        }
+        //truly authenticate the user to firebase
+        await authenticateUser()
+            .then((_) /* call back for creating a users document*/ {
+          setState(() => _isTryingToRegister = false);
+
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => HomeScreen())); //go to profile screen
+
+          //catching invalid email error
+        }).catchError((error) {
+          setState(() => _isTryingToRegister = false);
+
+          //if email already exists throw an error popup
+          if (error.toString().contains("ALREADY")) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return SingleActionPopup(
+                      "Email is already in use", "ERROR!", Colors.red);
+                });
+          }
+
+          //catch a network timed out error
+          if (error.toString().contains("NETWORK")) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return ErrorPopup(
+                      "Network timed out, please check your wifi connection",
+                      () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      _isTryingToRegister = true;
+                    });
+                    executeRegistration();
+                  });
+                });
+          } else {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  print(error);
+                  return ErrorPopup(
+                      "Oof. Something went wrong during registration.", () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      _isTryingToRegister = true;
+                    });
+                    executeRegistration();
+                  });
+                });
+          }
+        });
+      }
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return SingleActionPopup(
+                "Enter your first and last name correctly.",
+                "User not Matched",
+                Colors.red);
+          });
+      setState(() => _isTryingToRegister = false);
+    }
+  }
+
+  //handles registration of user
+  void tryToRegister() async {
+    //checking to make sure multiple attempts at registering doesn't occur
+    if (!_isTryingToRegister) {
+      setState(() => _isTryingToRegister = true);
+
+      if (_registrationFormKey.currentState
+          .validate()) /*check whether form is valid */ {
+        executeRegistration();
+        // Connectivity().checkConnectivity().then(
+        //     (connectionState) /* check whether connection is established */ {
+        //   if (connectionState == ConnectivityResult.none) {
+        //     throw Exception("Phone is not connected to wifi");
+        //   } else {
+        //     executeRegistration();
+        //   }
+        // }).catchError((connectionError) {
+        //   setState(() => _isTryingToRegister = false);
+
+        //   //show error on UI
+        //   if (connectionError.toString().contains("wifi")) {
+        //     showDialog(
+        //         context: context,
+        //         builder: (context) {
+        //           return ErrorPopup("Phone is not connected to wifi", () {
+        //             Navigator.of(context).pop();
+        //             tryToRegister();
+        //           });
+        //         });
+        //   }
+        // });
+      } else {
+        setState(() => _isTryingToRegister = false);
+      }
+    }
+  }
 
   Widget build(BuildContext context) {
     double pixelTwoWidth = 411.42857142857144;
@@ -289,12 +614,12 @@ class _RegisterTemplateState extends State<RegisterTemplate> {
                               return "Field is empty";
                             }
                             setState(() {
-                              _username = val;
+                              _email = val;
                             });
 
                             //validate email
-                            bool dotIsNotIn = _username.indexOf(".") == -1;
-                            bool atIsNotIn = _username.indexOf("@") == -1;
+                            bool dotIsNotIn = _email.indexOf(".") == -1;
+                            bool atIsNotIn = _email.indexOf("@") == -1;
 
                             if (dotIsNotIn || atIsNotIn) {
                               return "Invalid Email Type";
@@ -357,13 +682,7 @@ class _RegisterTemplateState extends State<RegisterTemplate> {
                                       fontFamily: 'Lato'),
                                 ),
                               ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            new HomeScreen()));
-                              },
+                              onPressed: () => tryToRegister(),
                             )),
                       )
                     ],
@@ -895,9 +1214,30 @@ class addWorkoutsTemplate extends StatefulWidget {
 }
 
 class _addWorkoutsTemplateState extends State<addWorkoutsTemplate> {
-
-Map exercises = {"Push-Up": {"category": "Chest"}, "Bench-Press": {"category": "Chest"}, "Squat": {"category": "Legs"}, "Lunge": {"category": "Legs"}, "Plank": {"category": "Core"}, "Burpee": {"category": "Full Body"}, "Sit-Up": {"category": "Core"}, "Calf-Raise": {"category": "Legs"}, "Lateral-Raise": {"category": "Arms"}, "Bicep-Curl": {"category": "Arms"}};
-List<String> exercisenames = ['Push-Up', 'Bench-Press', 'Squat', 'Lunge', 'Plank', 'Burpee', 'Sit-Up', 'Calf-Raise', 'Lateral-Raise', 'Bicep-Curl'];
+  Map exercises = {
+    "Push-Up": {"category": "Chest"},
+    "Bench-Press": {"category": "Chest"},
+    "Squat": {"category": "Legs"},
+    "Lunge": {"category": "Legs"},
+    "Plank": {"category": "Core"},
+    "Burpee": {"category": "Full Body"},
+    "Sit-Up": {"category": "Core"},
+    "Calf-Raise": {"category": "Legs"},
+    "Lateral-Raise": {"category": "Arms"},
+    "Bicep-Curl": {"category": "Arms"}
+  };
+  List<String> exercisenames = [
+    'Push-Up',
+    'Bench-Press',
+    'Squat',
+    'Lunge',
+    'Plank',
+    'Burpee',
+    'Sit-Up',
+    'Calf-Raise',
+    'Lateral-Raise',
+    'Bicep-Curl'
+  ];
 
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -925,9 +1265,8 @@ List<String> exercisenames = ['Push-Up', 'Bench-Press', 'Squat', 'Lunge', 'Plank
                 color: Colors.red,
               ),
               showPreview: true,
-              
               itemBuilder: (context, index) {
-              return Card(
+                return Card(
                   //margin: EdgeInsets.fromLTRB(4.0, 2.0, 40.0, 2.0),
                   child: ListTile(
                     leading:
@@ -938,11 +1277,11 @@ List<String> exercisenames = ['Push-Up', 'Bench-Press', 'Squat', 'Lunge', 'Plank
                     onTap: () => {},
                   ),
                 );
-            },
+              },
               indexedHeight: (i) {
-              return 80;
-            },
-            keyboardUsage: true,
+                return 80;
+              },
+              keyboardUsage: true,
             ),
             // ListView(
             //   children: <Widget>[
