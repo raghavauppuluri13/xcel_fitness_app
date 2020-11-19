@@ -1,8 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:xcel_fitness_app/screens/home/notifications.dart';
+import 'package:xcel_fitness_app/screens/home/settings.dart';
+import 'package:xcel_fitness_app/screens/home/workouts.dart';
 import 'package:xcel_fitness_app/screens/main/content/home.dart';
-import 'package:xcel_fitness_app/screens/authentication/templates.dart';
+import 'package:xcel_fitness_app/utility/util_widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -50,7 +53,9 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         title: Text((_selectedIndex == 0)
             ? "Home"
-            : (_selectedIndex == 1) ? "Workouts" : "History"),
+            : (_selectedIndex == 1)
+                ? "Workouts"
+                : "History"),
         leading: (_selectedIndex == 0)
             ? IconButton(
                 icon: Icon(Icons.settings),
@@ -103,73 +108,17 @@ class _HomeScreenState extends State<HomeScreen> {
         children: <Widget>[
           changeUI(_selectedIndex),
           if (_isSettingsButtonClicked)
-            Stack(children: [
-              GestureDetector(
-                child: Container(
-                  color: Colors.black45,
-                  width: screenWidth,
-                  height: screenHeight,
-                ),
-                onTap: () {
-                  setState(() {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    _isSettingsButtonClicked = false;
-                  });
-                },
-              ),
-              Container(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: SingleChildScrollView(
-                    child: GestureDetector(
-                      child: Container(
-                        child: new SettingsTemplate(),
-                        decoration: new BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white),
-                      ),
-                      onTap: () {
-                        FocusScope.of(context).requestFocus(FocusNode());
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ]),
+            CurvedPopup(
+                child: new SettingsTemplate(),
+                removePopup: () => setState(() {
+                      _isSettingsButtonClicked = false;
+                    })),
           if (_isNotificationButtonClicked)
-            Stack(children: [
-              GestureDetector(
-                child: Container(
-                  color: Colors.black45,
-                  width: screenWidth,
-                  height: screenHeight,
-                ),
-                onTap: () {
-                  setState(() {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    _isNotificationButtonClicked = false;
-                  });
-                },
-              ),
-              Container(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: SingleChildScrollView(
-                    child: GestureDetector(
-                      child: Container(
-                        child: new NotificationTemplate(),
-                        decoration: new BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white),
-                      ),
-                      onTap: () {
-                        FocusScope.of(context).requestFocus(FocusNode());
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ]),
+            CurvedPopup(
+                child: new NotificationTemplate(),
+                removePopup: () => setState(() {
+                      _isNotificationButtonClicked = false;
+                    })),
         ],
       ),
       bottomNavigationBar: CurvedNavigationBar(
