@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xcel_fitness_app/screens/authentication/templates.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:xcel_fitness_app/utility/util_widgets.dart';
 
 class AuthScreen extends StatefulWidget {
   AuthScreen({Key key}) : super(key: key);
@@ -36,13 +36,6 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() {
       _isRegisterButtonClicked = true;
       _isLoginButtonClicked = false;
-    });
-  }
-
-  void createNewForgotPasswordTemplate() {
-    setState(() {
-      _isLoginButtonClicked = false;
-      _isRegisterButtonClicked = false;
     });
   }
 
@@ -168,66 +161,17 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ),
           if (_isLoginButtonClicked)
-            Stack(children: [
-              GestureDetector(
-                child: Container(
-                  color: Colors.black45,
-                  width: screenWidth,
-                  height: screenHeight,
-                ),
-                onTap: () {
-                  setState(() {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    _isLoginButtonClicked = false;
-                  });
-                },
-              ),
-              Container(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: SingleChildScrollView(
-                    child: GestureDetector(
-                      child: Container(
-                        child: new LoginTemplate(),
-                        decoration: new BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white),
-                      ),
-                      onTap: () {
-                        FocusScope.of(context).requestFocus(FocusNode());
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ]),
+            CurvedPopup(
+                child: new LoginTemplate(),
+                removePopup: () => setState(() {
+                      _isLoginButtonClicked = false;
+                    })),
           if (_isRegisterButtonClicked)
-            Stack(children: <Widget>[
-              GestureDetector(
-                child: Container(color: Colors.black45),
-                onTap: () {
-                  setState(() {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    _isRegisterButtonClicked = false;
-                  });
-                },
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: SingleChildScrollView(
-                    child: GestureDetector(
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                  },
-                  child: Container(
-                    child: new RegisterTemplate(),
-                    decoration: new BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.white),
-                  ),
-                )),
-              )
-            ]),
+            CurvedPopup(
+                child: new RegisterTemplate(),
+                removePopup: () => setState(() {
+                      _isRegisterButtonClicked = false;
+                    })),
         ],
       ),
     );
