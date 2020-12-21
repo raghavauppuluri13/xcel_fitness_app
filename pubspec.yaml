@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.5.2 <3.0.0"
+  sdk: ">=2.10.4 <3.0.0"
 
 dependencies:
   flutter:
@@ -23,6 +23,7 @@ dependencies:
   path_provider:
   cloud_firestore:
   gsheets:
+  permission_handler:
   firebase_core:
   flutter_icons:
   curved_navigation_bar:
