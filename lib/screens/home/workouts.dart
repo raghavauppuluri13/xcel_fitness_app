@@ -1,3 +1,5 @@
+//import 'dart:html';
+
 import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -18,6 +20,9 @@ class _CreateWorkoutTemplateState extends State<CreateWorkoutTemplate> {
   Icon _addIcon = new Icon(Icons.add);
   Icon _backIcon = new Icon(Icons.arrow_back);
   double pixelTwoWidth = 411.42857142857144;
+  String _exerciseName = "Exercise";
+  int _repCount = 0;
+  int _setCount = 0;
 
   bool onClickedTitle = false;
   String _workoutName = "Workout 1";
@@ -108,13 +113,69 @@ class _CreateWorkoutTemplateState extends State<CreateWorkoutTemplate> {
                   child: Center(
                       child: Container(
                           child: Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding: EdgeInsets.all(16.0),
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Spacer(flex: 1),
-                                    Spacer(flex: 1),
+                                    Card(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          ListTile(
+                                            leading:
+                                                Icon(FlutterIcons.dumbbell_mco),
+                                            title: Text(_exerciseName),
+                                            subtitle: Text('Tap for more info'),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: <Widget>[
+                                              TextButton(
+                                                child: const Text('Reps'),
+                                                onPressed: () {/* ... */},
+                                              ),
+                                              _repCount != 0
+                                                  ? new IconButton(
+                                                      icon: new Icon(
+                                                          Icons.remove, color: Colors.black,),
+                                                      onPressed: () => setState(
+                                                          () => _repCount--),
+                                                    )
+                                                  : new Container(),
+                                              new Text(_repCount.toString()),
+                                              new IconButton(
+                                                  icon: new Icon(Icons.add, color: Colors.black,),
+                                                  onPressed: () => setState(
+                                                      () => _repCount++)),
+                                              const SizedBox(width: 8),
+                                              TextButton(
+                                                child: const Text('Sets'),
+                                                onPressed: () {/* ... */},
+                                              ),
+                                              _setCount != 0
+                                                  ? new IconButton(
+                                                      icon: new Icon(
+                                                          Icons.remove, color: Colors.black,),
+                                                      onPressed: () => setState(
+                                                          () => _setCount--),
+                                                    )
+                                                  : new Container(),
+                                              new Text(_setCount.toString()),
+                                              new IconButton(
+                                                  icon: new Icon(Icons.add, color: Colors.black,),
+                                                  onPressed: () => setState(
+                                                      () => _setCount++)),
+                                              const SizedBox(width: 8),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Spacer(
+                                        flex:
+                                            1), //temporarily here for maintaining layout
                                     Spacer(flex: 1),
                                     Spacer(flex: 1),
                                     Flexible(
@@ -148,6 +209,8 @@ class _CreateWorkoutTemplateState extends State<CreateWorkoutTemplate> {
   }
 }
 
+//going to add a class for card layout here (that is above rn)
+
 //adding workouts template
 class addWorkoutsTemplate extends StatefulWidget {
   addWorkoutsTemplate();
@@ -159,6 +222,7 @@ class addWorkoutsTemplate extends StatefulWidget {
 }
 
 class _addWorkoutsTemplateState extends State<addWorkoutsTemplate> {
+  String exercisename = "";
   Map exercises = {
     "Push-Up": {"category": "Chest"},
     "Bench-Press": {"category": "Chest"},
@@ -219,7 +283,10 @@ class _addWorkoutsTemplateState extends State<addWorkoutsTemplate> {
                     title: Text(exercisenames[index]),
                     subtitle: Text(exercises[exercisenames[index]]['category']),
                     trailing: Icon(Icons.help_outline),
-                    onTap: () => {},
+                    onTap: () => {
+                      exercisename = exercisenames[index],
+                      print(exercisename),
+                    },
                   ),
                 );
               },
