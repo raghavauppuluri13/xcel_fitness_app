@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -14,11 +15,12 @@ class SettingsTemplate extends StatefulWidget {
 
 class _SettingsTemplateState extends State<SettingsTemplate> {
   bool _wantsToChange = false;
-
+  bool _wantsPasswordChanged = false;
+  final TextEditingController _emailController = TextEditingController();
   String _firstName = 'Sally';
   String _lastName = 'Johnson';
   String _subscription = 'Trainer';
-  String _emailAddress = 'SallyJ@gmail.com';
+  String _emailAddress = 'example@gmail.com';
 
   void updateSettings() {
     setState(() {
@@ -26,9 +28,20 @@ class _SettingsTemplateState extends State<SettingsTemplate> {
     });
   }
 
-    void applySettings() {
-    setState(() {
+  void applySettings() {
+    setState(() async {
       //TODO: have controllers from textfields contact firebase with new settings info
+      if (_wantsPasswordChanged) {
+        if (_emailController.text == "") {
+          _emailController.text = _emailAddress;
+          print(_emailController.text);
+        };
+        await FirebaseAuth.instance
+            .sendPasswordResetEmail(email: _emailController.text);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Check your email for a link to reset your password"),
+        ));
+      }
       _wantsToChange = false;
     });
   }
@@ -55,7 +68,7 @@ class _SettingsTemplateState extends State<SettingsTemplate> {
           ),
         ));
 
-        final applyButton = Material(
+    final applyButton = Material(
         elevation: 5.0,
         borderRadius: BorderRadius.circular(30.0),
         color: Colors.red[600],
@@ -102,13 +115,18 @@ class _SettingsTemplateState extends State<SettingsTemplate> {
                     label: "  Subscription: " + _subscription + "  ")
                 : SettingsCard(label: "Subscription: " + _subscription + "  "),
             (_wantsToChange)
-                ? SettingsField(label: "  Email: " + _emailAddress + "  ")
+                ? SettingsField(label: "  Email: " + _emailAddress + "  ", valueController: _emailController,)
                 : SettingsCard(label: _emailAddress + "  "),
             (_wantsToChange)
-                ? SettingsField(label: "  Type Old Password")
-                : Container(),
-            (_wantsToChange)
-                ? SettingsField(label: "  Type New Password")
+                ? CheckboxListTile(
+                title: Text("Want to Change your Password?", style: TextStyle(fontSize: 17.0),),
+                    value: _wantsPasswordChanged,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _wantsPasswordChanged = value;
+                      });
+                    },
+                  )
                 : Container(),
             Padding(
               padding: new EdgeInsets.all(15),
@@ -124,8 +142,8 @@ class _SettingsTemplateState extends State<SettingsTemplate> {
 class SettingsField extends StatefulWidget {
   @override
   String label; // label text for textfield
-
-  SettingsField({Key key, this.label}) : super(key: key);
+  TextEditingController valueController = TextEditingController();
+  SettingsField({Key key, this.label, this.valueController}) : super(key: key);
 
   _SettingsFieldState createState() => _SettingsFieldState();
 }
@@ -140,6 +158,7 @@ class _SettingsFieldState extends State<SettingsField> {
             labelText: widget.label,
             labelStyle: TextStyle(fontFamily: 'Lato', fontSize: 18),
           ),
+          controller: widget.valueController,
         ));
   }
 }
